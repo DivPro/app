@@ -1,0 +1,61 @@
+run:
+  deadline: 10m
+  concurrency: 4
+  modules-download-mode: readonly
+
+linters-settings:
+  govet:
+    enable-all: true
+    disable:
+      - fieldalignment
+      - shadow
+  errcheck:
+    check-type-assertions: true
+    check-blank: true
+  lll:
+    line-length: 160
+  nlreturn:
+    block-size: 5
+  gci:
+    sections:
+      - standard
+      - default
+      - prefix(github.com/DivPro/app)
+    custom-order: true
+
+linters:
+  disable-all: true
+  enable:
+    - decorder
+    - errcheck
+    - errname
+    - errorlint
+    - gocognit
+    - goconst
+    - gocritic
+    - gocyclo
+    - gofmt
+#    - gofumpt
+    - goimports
+    - gosec
+    - gosimple
+    - govet
+    - ineffassign
+    - lll
+    - megacheck
+    - revive
+    - staticcheck
+    - typecheck
+    - unconvert
+    - unused
+    - gci
+    - maintidx
+    - makezero
+    - misspell
+    - nlreturn
+    - nakedret
+    - stylecheck
+    - usestdlibvars
+    - whitespace
+    - prealloc
+    - unparam
