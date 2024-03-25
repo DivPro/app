@@ -3,15 +3,41 @@ package http
 import (
 	"context"
 	"errors"
-	"fmt"
 	"log/slog"
 	"net/http"
+	"reflect"
+	"strings"
 
+	"github.com/go-playground/locales/ru"
+	ut "github.com/go-playground/universal-translator"
 	validate "github.com/go-playground/validator/v10"
+	rutrans "github.com/go-playground/validator/v10/translations/ru"
 	json "github.com/json-iterator/go"
 )
 
+var validator = validate.New(validate.WithRequiredStructEnabled())
+
 type handler[Req, Res any] func(ctx context.Context, r Req) (Res, error)
+
+var trans ut.Translator
+
+func InitValidator() error {
+	validator.RegisterTagNameFunc(func(fld reflect.StructField) string {
+		name := strings.SplitN(fld.Tag.Get("json"), ",", 2)[0]
+
+		if name == "-" {
+			return ""
+		}
+
+		return name
+	})
+
+	rt := ru.New()
+	uni := ut.New(rt, rt)
+	trans, _ = uni.GetTranslator("ru")
+
+	return rutrans.RegisterDefaultTranslations(validator, trans)
+}
 
 func processRequestFn[Req, Res any](h handler[Req, Res]) http.HandlerFunc {
 	return func(w http.ResponseWriter, request *http.Request) {
@@ -25,14 +51,13 @@ func processRequestFn[Req, Res any](h handler[Req, Res]) http.HandlerFunc {
 			logger.Debug("client request")
 		}()
 
-		validator := validate.New(validate.WithRequiredStructEnabled())
 		err := validator.Struct(r)
 		if err != nil {
 			var validationErrors validate.ValidationErrors
 			errors.As(err, &validationErrors)
-			errMsg := make([]string, len(validationErrors))
-			for i, validationErr := range validationErrors {
-				errMsg[i] = fmt.Sprintf("%s: %s", validationErr.Field(), validationErr.Error())
+			errMsg := make(map[string]string, len(validationErrors))
+			for _, validationErr := range validationErrors {
+				errMsg[validationErr.Field()] = validationErr.Translate(trans)
 			}
 
 			respond(w, http.StatusBadRequest, struct {

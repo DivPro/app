@@ -45,7 +45,7 @@ func (s *Service) Create(ctx context.Context, order entity.Order) (*entity.Order
 		for _, availability := range availabilities {
 			availability.Quota--
 		}
-		if err := tx.CreateOrder(ctx, &order); err != nil {
+		if err := tx.CreateOrder(ctx, order); err != nil {
 			slog.Error("db error", slog.String("error", err.Error()))
 			return ErrInternal
 		}

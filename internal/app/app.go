@@ -75,6 +75,9 @@ func (a *App) Configure(conf config.Config) {
 		health = server.NewHealthRouter(
 			server.NewHealthHandler(&a.isReady),
 		)
+		if err := httpapi.InitValidator(); err != nil {
+			logError("init translations", err)
+		}
 	})
 
 	a.healthServer = server.New(conf.Health, health)

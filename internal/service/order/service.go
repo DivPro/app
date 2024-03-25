@@ -14,7 +14,7 @@ type TX interface {
 
 type Order interface {
 	FindAvailability(ctx context.Context, date time.Time, hotelID string, roomID string) (*entity.RoomAvailability, error)
-	CreateOrder(ctx context.Context, order *entity.Order) error
+	CreateOrder(ctx context.Context, order entity.Order) error
 	UpdateAvailabilities(ctx context.Context, availabilities []*entity.RoomAvailability) error
 }
 

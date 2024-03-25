@@ -1,4 +1,4 @@
-default: fmt lint tidy build test
+default: fmt generate lint tidy build test
 
 # globals
 GOBIN?=$(GOPATH)/bin

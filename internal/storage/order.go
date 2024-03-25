@@ -22,8 +22,8 @@ func (db *DB) FindAvailability(_ context.Context, date time.Time, hotelID string
 	}, nil
 }
 
-func (db *DB) CreateOrder(_ context.Context, order *entity.Order) error {
-	db.orders = append(db.orders, *order)
+func (db *DB) CreateOrder(_ context.Context, order entity.Order) error {
+	db.orders = append(db.orders, order)
 
 	return nil
 }
